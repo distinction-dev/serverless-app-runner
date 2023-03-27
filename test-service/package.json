@@ -1,0 +1,17 @@
+{
+  "name": "test-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "package": "serverless package"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "serverless-local-schedule": "*"
+  },
+  "devDependencies": {
+    "serverless": "^3.23.0"
+  }
+}
