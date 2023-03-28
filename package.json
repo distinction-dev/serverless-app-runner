@@ -1,0 +1,43 @@
+{
+  "name": "serverless-app-runner",
+  "version": "0.0.1",
+  "description": "Create app runner service within your Serverless project",
+  "main": "index.js",
+  "peerDependencies": {
+    "serverless": "2 || 3"
+  },
+  "devDependencies": {
+    "@semantic-release/commit-analyzer": "^9.0.2",
+    "@semantic-release/npm": "9.0.1",
+    "@semantic-release/release-notes-generator": "^10.0.3",
+    "conventional-changelog-conventionalcommits": "^5.0.0",
+    "jest": "^27.5.1",
+    "semantic-release": "19.0.2"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "files": [
+    "*.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/distinction-dev/serverless-app-runner.git"
+  },
+  "keywords": [
+    "serverless",
+    "apprunner",
+    "aws",
+    "app-runner",
+    "cloud-run"
+  ],
+  "author": "Jeel Tilva",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/distinction-dev/serverless-app-runner/issues"
+  },
+  "homepage": "https://github.com/distinction-dev/serverless-app-runner#readme"
+}
