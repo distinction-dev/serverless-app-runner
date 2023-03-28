@@ -5,7 +5,7 @@
   "main": "index.js",
   "peerDependencies": {
     "serverless": "2 || 3"
-  },
+  },  
   "devDependencies": {
     "@semantic-release/commit-analyzer": "^9.0.2",
     "@semantic-release/npm": "9.0.1",
@@ -18,7 +18,9 @@
     "node": ">=14.0.0"
   },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "ci": "rm -rf node_modules && yarn install --frozen-lockfile",
+    "semantic-release": "semantic-release"
   },
   "files": [
     "*.js"
