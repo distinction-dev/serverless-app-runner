@@ -3,16 +3,20 @@ import { get } from "./util";
 import { parser } from "./parser";
 import { compile } from "./compiler";
 import { schema } from "./schema";
+import { ServerlessFrameworkConfiguration } from "serverless-schema";
 
 interface ServerlessPluginOptions {
   globalOptions?: boolean;
 }
 class ServerlessPlugin {
-  serverless: Serverless;
+  serverless: ServerlessFrameworkConfiguration;
   options: ServerlessPluginOptions;
   config: any;
   hooks: { "package:compileFunctions": any };
-  constructor(serverless: Serverless, options: ServerlessPluginOptions) {
+  constructor(
+    serverless: ServerlessFrameworkConfiguration,
+    options: ServerlessPluginOptions
+  ) {
     this.serverless = serverless;
     this.options = options;
 

@@ -1,16 +1,22 @@
-const toIdentifier = name => {
-  const id = name.replace(/[^0-9A-Za-z]/g, "");
-  return id.charAt(0).toUpperCase() + id.slice(1);
-};
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+// const toIdentifier = (name: string) => {
+//   const id = name.replace(/[^0-9A-Za-z]/g, "");
+//   return id.charAt(0).toUpperCase() + id.slice(1);
+// };
 
 const toTags = (tags = {}) => {
   return Object.entries(tags).map(([Key, Value]) => ({ Key, Value }));
 };
 
-const toEnvironment = tags =>
-  Object.entries(tags).map(([Name, Value]) => ({ Name, Value }));
+// const toEnvironment = tags =>
+//   Object.entries(tags).map(([Name, Value]) => ({ Name, Value }));
 
-const compileCluster = (config, images, service) => ({
+const compileCluster = (
+  config: Record<string, any>,
+  images: Record<string, any>,
+  service: Record<string, any>
+) => ({
   Resources: {
     [service.name + "AppRunnerService"]: {
       Type: "AWS::AppRunner::Service",
@@ -172,38 +178,38 @@ const compileIamRoles = config => ({
 //   },
 // });
 
-const compileScheduledTask = (identifier, task) => ({
-  Type: "AWS::Events::Rule",
-  DependsOn: task.dependsOn,
-  Properties: {
-    ScheduleExpression: task.schedule,
-    Targets: [
-      {
-        Id: identifier,
-        Arn: {
-          "Fn::GetAtt": ["FargateTasksCluster", "Arn"],
-        },
-        RoleArn: {
-          "Fn::GetAtt": ["FargateIamExecutionRole", "Arn"],
-        },
-        EcsParameters: {
-          TaskDefinitionArn: {
-            "Fn::Sub": "${" + identifier + "Task}",
-          },
-          TaskCount: 1,
-          LaunchType: "FARGATE",
-          NetworkConfiguration: {
-            AwsVpcConfiguration: {
-              AssignPublicIp: task.vpc.assignPublicIp ? "ENABLED" : "DISABLED",
-              SecurityGroups: task.vpc.securityGroupIds,
-              Subnets: task.vpc.subnetIds,
-            },
-          },
-        },
-      },
-    ],
-  },
-});
+// const compileScheduledTask = (identifier, task) => ({
+//   Type: "AWS::Events::Rule",
+//   DependsOn: task.dependsOn,
+//   Properties: {
+//     ScheduleExpression: task.schedule,
+//     Targets: [
+//       {
+//         Id: identifier,
+//         Arn: {
+//           "Fn::GetAtt": ["FargateTasksCluster", "Arn"],
+//         },
+//         RoleArn: {
+//           "Fn::GetAtt": ["FargateIamExecutionRole", "Arn"],
+//         },
+//         EcsParameters: {
+//           TaskDefinitionArn: {
+//             "Fn::Sub": "${" + identifier + "Task}",
+//           },
+//           TaskCount: 1,
+//           LaunchType: "FARGATE",
+//           NetworkConfiguration: {
+//             AwsVpcConfiguration: {
+//               AssignPublicIp: task.vpc.assignPublicIp ? "ENABLED" : "DISABLED",
+//               SecurityGroups: task.vpc.securityGroupIds,
+//               Subnets: task.vpc.subnetIds,
+//             },
+//           },
+//         },
+//       },
+//     ],
+//   },
+// });
 
 // const compileService = (identifier, task) => ({
 //   Type: 'AWS::ECS::Service',
@@ -274,7 +280,10 @@ const compileScheduledTask = (identifier, task) => ({
 //   };
 // };
 
-export const compile = (images, config) => {
+export const compile = (
+  images: Record<string, any>,
+  config: Record<string, any>
+) => {
   const iamRoles = compileIamRoles(config);
   const services = config.services.reduce(({ Resources, Outputs }, service) => {
     const compiled = compileCluster(config, images, service);
