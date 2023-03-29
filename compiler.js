@@ -52,7 +52,7 @@ const compileCluster = (config, images, service) => ({
   Outputs: {},
 });
 
-const ECRAccessRole = () => ({
+const ECRAccessRole = (config) => ({
   Resources: {
     AppRunnerECRAccessRole: {
       Type: 'AWS::IAM::Role',
@@ -280,7 +280,7 @@ const compileScheduledTask = (identifier, task) => ({
 // };
 
 module.exports = (images, config) => {
-  const ecrRole = ECRAccessRole();
+  const ecrRole = ECRAccessRole(config);
   const iamRoles = config.services.reduce(({ Resources, Outputs }, service) => {
     const role = compileIamRoles(config, service);
     return {
