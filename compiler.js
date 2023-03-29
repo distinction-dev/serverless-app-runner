@@ -287,7 +287,7 @@ module.exports = (images, config) => {
       Resources: { ...Resources, ...role.Resources },
       Outputs: { ...Outputs, ...role.Outputs },
     };
-  })
+  }, {})
   const services = config.services.reduce(({ Resources, Outputs }, service) => {
     const compiled = compileCluster(config, images, service);
     return {
