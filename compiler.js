@@ -34,7 +34,7 @@ const compileCluster = (config, images, service) => ({
           Cpu: service.instanceConfiguration?.cpu || '1 vCPU',
           Memory: service.instanceConfiguration?.memory || '2 GB',
           InstanceRoleArn: service.instanceConfiguration?.instanceRoleArn || {
-            'Fn::GetAtt': ['AppRunnerInstanceRole', 'Arn'],
+            'Fn::GetAtt': [service.name + 'AppRunnerInstanceRole', 'Arn'],
           }
         },
         HealthCheckConfiguration: {
@@ -52,7 +52,7 @@ const compileCluster = (config, images, service) => ({
   Outputs: {},
 });
 
-const compileIamRoles = config => ({
+const ECRAccessRole = () => ({
   Resources: {
     AppRunnerECRAccessRole: {
       Type: 'AWS::IAM::Role',
@@ -93,10 +93,15 @@ const compileIamRoles = config => ({
         Tags: toTags(config.tags),
       },
     },
-    AppRunnerInstanceRole: {
+  }
+});
+
+const compileIamRoles = (config, service) => ({
+  Resources: {
+    [service.name + 'AppRunnerInstanceRole']: {
       Type: 'AWS::IAM::Role',
       Properties: {
-        RoleName: 'Apprunner-instance-role', 
+        RoleName: service.name + 'Apprunner-instance-role', 
         AssumeRolePolicyDocument: {
           Version: '2012-10-17',
           Statement: [
@@ -275,7 +280,14 @@ const compileScheduledTask = (identifier, task) => ({
 // };
 
 module.exports = (images, config) => {
-  const iamRoles = compileIamRoles(config);
+  const ecrRole = ECRAccessRole();
+  const iamRoles = config.services.reduce(({ Resources, Outputs }, service) => {
+    const role = compileIamRoles(config, service);
+    return {
+      Resources: { ...Resources, ...role.Resources },
+      Outputs: { ...Outputs, ...role.Outputs },
+    };
+  })
   const services = config.services.reduce(({ Resources, Outputs }, service) => {
     const compiled = compileCluster(config, images, service);
     return {
@@ -287,11 +299,13 @@ module.exports = (images, config) => {
   return {
     Resources: {
       ...services.Resources,
-      ...iamRoles.Resources
+      ...iamRoles.Resources,
+      ...ecrRole.Resources
     },
     Outputs: {
       ...services.Outputs,
-      ...iamRoles.Outputs
+      ...iamRoles.Outputs,
+      ...ecrRole.Outputs
     },
   };
 };
