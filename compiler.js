@@ -27,7 +27,19 @@ const compileCluster = (config, images, service) => ({
           AutoDeploymentsEnabled: service.autoDeploy ?? true,
           ImageRepository: {
             ImageIdentifier: images[service.name],
-            ImageRepositoryType: 'ECR'
+            ImageRepositoryType: 'ECR',
+            ...( (service.port || service.runtimeSecrets || service.runtimeVariables || service.startCommand)&& {
+              ImageConfiguration: {
+                Port: service.port ?? 8080,
+                ...(service.runtimeSecrets.length > 0 && {
+                  RuntimeEnvironmentSecrets : service.runtimeSecrets
+                }), 
+                ...(service.runtimeVariables.length > 0 && {
+                  RuntimeEnvironmentVariables : service.runtimeVariables
+                }),
+                ...(service.startCommand && { StartCommand: service.startCommand } )
+              }
+            })
           }
         },
         InstanceConfiguration: {
@@ -76,15 +88,15 @@ const ECRAccessRole = (config) => ({
               Version: '2012-10-17',
               Statement: [
                 {
-                    Effect: 'Allow',
-                    Action: [
-                        'ecr:GetDownloadUrlForLayer',
-                        'ecr:BatchGetImage',
-                        'ecr:DescribeImages',
-                        'ecr:GetAuthorizationToken',
-                        'ecr:BatchCheckLayerAvailability'
-                    ],
-                    Resource: '*'
+                  Effect: 'Allow',
+                  Action: [
+                    'ecr:GetDownloadUrlForLayer',
+                    'ecr:BatchGetImage',
+                    'ecr:DescribeImages',
+                    'ecr:GetAuthorizationToken',
+                    'ecr:BatchCheckLayerAvailability',
+                  ],
+                  Resource: '*'
                 }
               ],
             },
@@ -115,18 +127,18 @@ const compileIamRoles = (config, service) => ({
           ],
         },
         Policies:
-          config.iamRoleStatements.length > 0
+          service.iamRoleStatements.length > 0
             ? [
                 {
                   PolicyName: 'ApprunnerTaskPolicy',
                   PolicyDocument: {
                     Version: '2012-10-17',
-                    Statement: config.iamRoleStatements,
+                    Statement: service.iamRoleStatements,
                   },
                 },
               ]
             : [],
-        ManagedPolicyArns: config.iamManagedPolicies,
+        ManagedPolicyArns: service.iamManagedPolicies,
         Tags: toTags(config.tags),
       },
     },
@@ -282,6 +294,8 @@ const compileScheduledTask = (identifier, task) => ({
 module.exports = (images, config) => {
   const ecrRole = ECRAccessRole(config);
   const iamRoles = config.services.reduce(({ Resources, Outputs }, service) => {
+    console.log('service :', service)
+    console.log(service.runtimeVariables)
     const role = compileIamRoles(config, service);
     return {
       Resources: { ...Resources, ...role.Resources },

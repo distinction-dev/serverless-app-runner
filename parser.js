@@ -31,6 +31,8 @@ const parseTask = (global, name, task) => {
       ...global.environment,
       ...(task.environment || {}),
     },
+    runtimeVariables: task.runtimeVariables || [],
+    runtimeSecrets: task.runtimeSecrets || [],
     tags: { ...global.tags, ...(task.tags || {}) },
     cloudFormationResource: {
       task: {
@@ -46,6 +48,7 @@ const parseTask = (global, name, task) => {
         ...get(task, 'cloudFormationResource.service', {}),
       },
     },
+    iamRoleStatements: task.iamRoleStatements || []
   };
 
   if (task.schedule) {
