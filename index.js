@@ -12,11 +12,7 @@ class ServerlessFargate {
     require('./schema')
   );
 
-  console.log('serverless.configSchemaHandler ::', serverless.configSchemaHandler)
-
   const config = get(serverless, 'configurationInput.appRunner', {});
-
-  console.log('config ::', config)
 
   if (!config.services) {
     return;
@@ -30,7 +26,6 @@ class ServerlessFargate {
 }
 
 async compileTasks() {
-    console.log('Inside Compile ')
     const config = parse({
       ...this.config,
     //   environment: this.getEnvironmentVariables(),
@@ -40,7 +35,6 @@ async compileTasks() {
     //   iamManagedPolicies: this.getIamManagedPolicies(),
     });
     const images = await this.resolveTaskImages(config.services);
-    console.log('Images ::', images)
 
     const compiled = compile(images, config);
 
@@ -57,23 +51,21 @@ async compileTasks() {
   }
   // Uses the frameworks internal means of building images, allowing the plugin
   // to use the same ECR image defintion as you would with a Lambda function.
-  async resolveTaskImages(tasks) {
-    console.log('Inside resolve image')
+  async resolveTaskImages(services) {
     const images = {};
-    console.log('Tasks ::', tasks)
 
-    for (const task of tasks) {
-      this.serverless.service.functions[task.name] = {
-        image: task.image,
+    for (const service of services) {
+      this.serverless.service.functions[service.name] = {
+        image: service.image,
       };
 
       const { functionImageUri } = await this.serverless
         .getProvider('aws')
-        .resolveImageUriAndSha(task.name);
+        .resolveImageUriAndSha(service.name);
 
-      images[task.name] = functionImageUri;
+      images[service.name] = functionImageUri;
 
-      delete this.serverless.service.functions[task.name];
+      delete this.serverless.service.functions[service.name];
     }
 
     return images;

@@ -43,8 +43,8 @@ const compileCluster = (config, images, service) => ({
           }
         },
         InstanceConfiguration: {
-          Cpu: service.instanceConfiguration?.cpu || '1 vCPU',
-          Memory: service.instanceConfiguration?.memory || '2 GB',
+          Cpu: service.cpu || '1 vCPU',
+          Memory: service.memory || '2 GB',
           InstanceRoleArn: service.instanceConfiguration?.instanceRoleArn || {
             'Fn::GetAtt': [service.name + 'AppRunnerInstanceRole', 'Arn'],
           }
@@ -294,8 +294,6 @@ const compileScheduledTask = (identifier, task) => ({
 module.exports = (images, config) => {
   const ecrRole = ECRAccessRole(config);
   const iamRoles = config.services.reduce(({ Resources, Outputs }, service) => {
-    console.log('service :', service)
-    console.log(service.runtimeVariables)
     const role = compileIamRoles(config, service);
     return {
       Resources: { ...Resources, ...role.Resources },

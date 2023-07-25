@@ -24,8 +24,8 @@ const parseTask = (global, name, task) => {
     },
     command: task.command || [],
     entryPoint: task.entryPoint || [],
-    memory: task.memory || global.memory,
-    cpu: task.cpu || global.cpu,
+    memory: task.instanceConfiguration.memory || global.memory,
+    cpu: task.instanceConfiguration.cpu || global.cpu,
     architecture: task.architecture || global.architecture,
     environment: {
       ...global.environment,
@@ -83,8 +83,8 @@ module.exports = config => {
   const global = {
     clusterName: config.clusterName,
     containerInsights: config.containerInsights,
-    memory: config.memory || '0.5GB',
-    cpu: config.cpu || 256,
+    memory: config.memory || '2 GB',
+    cpu: config.cpu || '1 vCPU',
     architecture: config.architecture,
     environment: config.environment || {},
     executionRoleArn: config.executionRoleArn,
