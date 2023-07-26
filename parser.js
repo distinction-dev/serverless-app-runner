@@ -24,8 +24,8 @@ const parseTask = (global, name, task) => {
     },
     command: task.command || [],
     entryPoint: task.entryPoint || [],
-    memory: task.instanceConfiguration.memory || global.memory,
-    cpu: task.instanceConfiguration.cpu || global.cpu,
+    memory: task.instanceConfiguration?.memory || global.memory,
+    cpu: task.instanceConfiguration?.cpu || global.cpu,
     architecture: task.architecture || global.architecture,
     environment: {
       ...global.environment,
