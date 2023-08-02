@@ -17,7 +17,7 @@ const compileCluster = (config, images, service, serverless) => ({
     [service.name + 'AppRunnerService']: {
       Type: 'AWS::AppRunner::Service',
       Properties: {
-        ServiceName: service.name,
+        ServiceName: service.name + serverless.configurationInput.provider.stage,
         SourceConfiguration: {
           AuthenticationConfiguration: {
             AccessRoleArn: service.accessRoleArn || {
