@@ -12,7 +12,7 @@ const toTags = (tags = {}) => {
 const toEnvironment = tags =>
   Object.entries(tags).map(([Name, Value]) => ({ Name, Value }));
 
-const compileCluster = (config, images, service) => ({
+const compileCluster = (config, images, service, serverless) => ({
   Resources: {
     [service.name + 'AppRunnerService']: {
       Type: 'AWS::AppRunner::Service',
@@ -46,7 +46,7 @@ const compileCluster = (config, images, service) => ({
           Cpu: service.cpu || '1 vCPU',
           Memory: service.memory || '2 GB',
           InstanceRoleArn: service.instanceConfiguration?.instanceRoleArn || {
-            'Fn::GetAtt': [service.name + 'AppRunnerInstanceRole', 'Arn'],
+            'Fn::GetAtt': [service.name + 'AppRunnerInstanceRole' + serverless.configurationInput.provider.stage, 'Arn'],
           }
         },
         HealthCheckConfiguration: {
@@ -301,7 +301,7 @@ module.exports = (images, config, serverless) => {
     };
   }, {})
   const services = config.services.reduce(({ Resources, Outputs }, service) => {
-    const compiled = compileCluster(config, images, service);
+    const compiled = compileCluster(config, images, service, serverless);
     return {
       Resources: { ...Resources, ...compiled.Resources },
       Outputs: { ...Outputs, ...compiled.Outputs },
