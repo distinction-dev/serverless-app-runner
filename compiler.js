@@ -108,9 +108,9 @@ const ECRAccessRole = (config) => ({
   }
 });
 
-const compileIamRoles = (config, service) => ({
+const compileIamRoles = (config, service, serverless) => ({
   Resources: {
-    [service.name + 'AppRunnerInstanceRole']: {
+    [service.name + 'AppRunnerInstanceRole' + serverless.configurationInput.provider.stage]: {
       Type: 'AWS::IAM::Role',
       Properties: {
         RoleName: service.name + 'Apprunner-instance-role', 
@@ -291,10 +291,10 @@ const compileScheduledTask = (identifier, task) => ({
 //   };
 // };
 
-module.exports = (images, config) => {
+module.exports = (images, config, serverless) => {
   const ecrRole = ECRAccessRole(config);
   const iamRoles = config.services.reduce(({ Resources, Outputs }, service) => {
-    const role = compileIamRoles(config, service);
+    const role = compileIamRoles(config, service, serverless);
     return {
       Resources: { ...Resources, ...role.Resources },
       Outputs: { ...Outputs, ...role.Outputs },

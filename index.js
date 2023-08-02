@@ -36,7 +36,7 @@ async compileTasks() {
     });
     const images = await this.resolveTaskImages(config.services);
 
-    const compiled = compile(images, config);
+    const compiled = compile(images, config, this.serverless);
 
     const template =
       this.serverless.service.provider.compiledCloudFormationTemplate;
