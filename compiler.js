@@ -113,7 +113,7 @@ const compileIamRoles = (config, service, serverless) => ({
     [service.name + 'AppRunnerInstanceRole' + serverless.configurationInput.provider.stage]: {
       Type: 'AWS::IAM::Role',
       Properties: {
-        RoleName: service.name + 'Apprunner-instance-role', 
+        RoleName: service.name + 'Apprunner-instance-role' + serverless.configurationInput.provider.stage, 
         AssumeRolePolicyDocument: {
           Version: '2012-10-17',
           Statement: [
