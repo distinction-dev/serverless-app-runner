@@ -1,0 +1,45 @@
+service: serverless-fargate
+
+frameworkVersion: '3'
+
+configValidationMode: error
+
+provider:
+  name: aws
+  region: us-east-1
+  tags:
+    provider: tag
+  ecr:
+    images:
+      node:
+        path: ./
+        file: Dockerfile.node
+
+plugins:
+  - '../index.js'
+
+appRunner:
+  # vpc: ${file(./vpc.yml)}
+  services:
+    service1:
+      image: node
+      runtimeVariables: 
+        -
+         Name: stage
+         Value: dev
+        - 
+          Name: key
+          Value: abc
+          
+      runtimeSecrets: 
+        - 
+         Name: ssm
+         Value: /slsTs/stage
+
+      iamRoleStatements: 
+        - Effect: Allow
+          Action: 
+            - 'ssm:Describe*'
+            - 'ssm:Get*'
+            - 'ssm:List*'
+          Resource: '*'
