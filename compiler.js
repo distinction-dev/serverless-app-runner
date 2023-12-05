@@ -61,7 +61,26 @@ const compileCluster = (config, images, service, serverless) => ({
       },
     },
   },
-  Outputs: {},
+  Outputs: {
+    [service.name + 'AppRunnerServiceUrl']: {
+      Value: {
+        'Fn::GetAtt': [[service.name + 'AppRunnerService'], 'ServiceUrl'],
+      },
+      Export: {
+        Name: {
+          'Fn::Join': [
+            '-',
+            [
+              {
+                Ref: 'AWS::StackName',
+              },
+              [service.name + 'AppRunnerServiceUrl'],
+            ],
+          ],
+        },
+      },
+    },
+  },
 });
 
 const ECRAccessRole = (config) => ({
