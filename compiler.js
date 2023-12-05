@@ -64,7 +64,7 @@ const compileCluster = (config, images, service, serverless) => ({
   Outputs: {
     [service.name + 'AppRunnerServiceUrl']: {
       Value: {
-        'Fn::GetAtt': [[service.name + 'AppRunnerService'], 'ServiceUrl'],
+        'Fn::GetAtt': [service.name + 'AppRunnerService', 'ServiceUrl'],
       },
       Export: {
         Name: {
@@ -74,7 +74,7 @@ const compileCluster = (config, images, service, serverless) => ({
               {
                 Ref: 'AWS::StackName',
               },
-              [service.name + 'AppRunnerServiceUrl'],
+              service.name + 'AppRunnerServiceUrl',
             ],
           ],
         },
