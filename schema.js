@@ -30,13 +30,8 @@ module.exports = {
         '^[a-zA-Z0-9-]+$': {
           type: 'object',
           properties: {
-            name: { type: 'string' },
             image: { type: 'string' },
             iamRoleStatements: { type: 'array' },
-            executionRoleArn: {
-              anyOf: [{ type: 'object' }, { type: 'string' }],
-            },
-            taskRoleArn: { anyOf: [{ type: 'object' }, { type: 'string' }] },
             vpc: {
               type: 'object',
               properties: {
@@ -92,6 +87,18 @@ module.exports = {
                 },
                 instanceRoleArn: { anyOf: [{ type: 'object' }, { type: 'string' }] }
               }
+            },
+            healthCheck: {
+              type: 'object',
+              properties: {
+                healthyThreshold: { type: 'number', minimum: 1, maximum: 20 },
+                interval: { type: 'number', minimum: 1, maximum: 20 },
+                protocol: { type: 'string',},
+                path: { type: 'string', enum: ['TCP' | 'HTTP'] },
+                timeout: { type: 'number', minimum: 1, maximum: 20 },
+                unhealthy: { type: 'number', minimum: 1, maximum: 20 },  
+              },
+              additionalProperties: false,
             },
             additionalProperties: false,
           },
